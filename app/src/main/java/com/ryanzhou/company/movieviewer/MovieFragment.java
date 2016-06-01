@@ -2,6 +2,7 @@ package com.ryanzhou.company.movieviewer;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,42 +19,40 @@ import com.ryanzhou.company.movieviewer.model.Movie;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.s
- */
 public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkListener{
 
-    // TODO: Customize parameters
     private int mColumnCount = 2;
     public final String LOG_TAG = this.getClass().getSimpleName();
 
     private OnListFragmentInteractionListener mListener;
     private MyMovieRecyclerViewAdapter mMyMovieRecyclerViewAdapter;
+    private List<Movie> savedInstanceMovies;
 
     private TheMovieDbAPI mTheMovieDbAPI;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public MovieFragment() {
-    }
+    public MovieFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        if( savedInstanceState == null){
-            //do a network call since 1st time instantiating
+        if(savedInstanceState == null){
             mTheMovieDbAPI = new TheMovieDbAPI(this);
             mTheMovieDbAPI.getHighestRateMovies();
         }
         else{
-
+            savedInstanceMovies = savedInstanceState.getParcelableArrayList(Movie.MOVIES_LIST_KEY);
         }
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        if( mMyMovieRecyclerViewAdapter != null && mMyMovieRecyclerViewAdapter.getmValues() != null ){
+            outState.putParcelableArrayList(Movie.MOVIES_LIST_KEY,
+                    (ArrayList<? extends Parcelable>) mMyMovieRecyclerViewAdapter.getmValues());
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -63,19 +62,14 @@ public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkList
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if( mTheMovieDbAPI == null){
             mTheMovieDbAPI = new TheMovieDbAPI(this);
         }
         if (id == R.id.action_filter_popularity) {
-            //Do pop req
             mTheMovieDbAPI.getPopularMovies();
         }
         else if( id == R.id.action_filter_ratings ){
-            //do action req
             mTheMovieDbAPI.getHighestRateMovies();
         }
         return super.onOptionsItemSelected(item);
@@ -94,10 +88,11 @@ public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkList
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            //TODO pass in arraylist of objects for
-            mMyMovieRecyclerViewAdapter = new MyMovieRecyclerViewAdapter(new ArrayList<Movie>(),
+            mMyMovieRecyclerViewAdapter = new MyMovieRecyclerViewAdapter(
+                    savedInstanceMovies != null ? savedInstanceMovies : new ArrayList<Movie>(),
                     mListener, context );
             recyclerView.setAdapter(mMyMovieRecyclerViewAdapter);
+            savedInstanceMovies = null;
         }
         return view;
     }
@@ -128,18 +123,7 @@ public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkList
         mMyMovieRecyclerViewAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(Movie m);
     }
 }

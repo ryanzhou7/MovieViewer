@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ryanzhou.company.movieviewer.model.Movie;
 import com.squareup.picasso.Picasso;
 
 public class MovieDetailsActivity extends AppCompatActivity {
@@ -53,16 +54,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
         mTextViewTitle.setText(title);
         mTextViewReleaseDate.setText(date);
         mTextViewSynopsis.setText( synopsis.length() == 0 ? "Plot not available" : synopsis);
-        mTextViewUserRating.setText( Double.toString(rating));
-
-        final String imageSize = "w342";
-        String posterImageUrl;
-        if( imageUrl == "null" ){
-            posterImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg";
-        }
-        else{
-            posterImageUrl = "https://image.tmdb.org/t/p/" + imageSize + imageUrl;
-        }
+        StringBuilder ratingString = new StringBuilder( Double.toString(rating) );
+        ratingString.append( getResources().getString(R.string.movie_rating_denominator) );
+        mTextViewUserRating.setText( ratingString.toString() );
+        String posterImageUrl = Movie.isInValidImageUrl(imageUrl) ? TheMovieDbAPI.notAvailablePostUrl:
+                TheMovieDbAPI.getImageUrlWithPath(imageUrl);
         Picasso.with(getApplicationContext()).load(posterImageUrl).into(mImageViewThumbnail);
 
     }

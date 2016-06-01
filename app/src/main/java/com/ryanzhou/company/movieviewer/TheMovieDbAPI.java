@@ -22,9 +22,15 @@ import java.util.List;
 
 /**
  * Created by ryanzhou on 5/9/16.
+ * FetchSortedDataTask recycle from Udacity's HTTP GET for weather data example github
  */
 public class TheMovieDbAPI implements MovieDataNetworker{
     public final String LOG_TAG = this.getClass().getSimpleName();
+
+    final static String baseImageUrl =  "https://image.tmdb.org/t/p/";
+    final static String notAvailablePostUrl = "https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg";
+
+    final static String imageSize = "w342";
 
     final static String BASE_URL = "https://api.themoviedb.org";
     final static String VERSION = "/3";
@@ -57,6 +63,11 @@ public class TheMovieDbAPI implements MovieDataNetworker{
         } else {
             throw new RuntimeException(fragment.toString() + " must implement NetworkListener");
         }
+    }
+
+    public static String getImageUrlWithPath(String imagePath){
+        StringBuilder fullImageUrl = new StringBuilder(baseImageUrl);
+        return fullImageUrl.append(imageSize).append(imagePath).toString();
     }
 
     @Override
@@ -96,8 +107,6 @@ public class TheMovieDbAPI implements MovieDataNetworker{
                         .build();
 
                 URL url = new URL(builtUri.toString());
-
-                Log.d(LOG_TAG, builtUri.toString() );
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -166,12 +175,9 @@ public class TheMovieDbAPI implements MovieDataNetworker{
                     }
                 }
                 mListener.onPostExecuteDone(result);
-                //mListener.onPostExecuteDone(result);
-                //mListener = null;
-
-                //TODO should I set this to null?
+                mListener = null;
             }else{
-                //TODO what should I do here?
+                Log.e(LOG_TAG, "NO MOVIE RESULTS FOUND");
             }
         }
 
@@ -195,7 +201,7 @@ public class TheMovieDbAPI implements MovieDataNetworker{
             String synopsis = currentObject.getString(SYNOPSIS);
             String releaseDate = currentObject.getString(RELEASE_DATE);
             String postImage = currentObject.getString(POSTER_IMAGE);
-            Movie newMovie = new Movie(title, postImage, synopsis, voteAverage, releaseDate);
+            Movie newMovie = new Movie(title, postImage, synopsis, releaseDate, voteAverage);
             movies.add( newMovie );
         }
         return movies;

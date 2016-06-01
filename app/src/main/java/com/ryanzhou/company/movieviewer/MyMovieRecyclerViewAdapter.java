@@ -38,16 +38,9 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = getmValues().get(position);
         Movie currentMovie = holder.mItem;
-        final String imageSize = "w342";
-
-        if( currentMovie.getmImagePath() == "null" ){
-            final String posterImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg";
-            Picasso.with(mContext).load(posterImageUrl).into(holder.mImageView);
-        }
-        else{
-            final String posterImageUrl = "https://image.tmdb.org/t/p/" + imageSize + currentMovie.getmImagePath();
-            Picasso.with(mContext).load(posterImageUrl).into(holder.mImageView);
-        }
+        String posterImageUrl = currentMovie.isInValidImageUrl() ? TheMovieDbAPI.notAvailablePostUrl:
+                TheMovieDbAPI.getImageUrlWithPath(currentMovie.getmImagePath());
+        Picasso.with(mContext).load(posterImageUrl).into(holder.mImageView);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +51,7 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
                 }
             }
         });
+
     }
 
     @Override

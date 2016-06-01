@@ -17,8 +17,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.OnL
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.movie_grid_container, new MovieFragment())
                         .commit();
-        }else{
-            //not first time creating, get the information from savedInstance
         }
     }
     @Override
