@@ -40,9 +40,13 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = getmValues().get(position);
         Movie currentMovie = holder.mItem;
-        String posterImageUrl = currentMovie.isInValidImageUrl() ? TheMovieDbAPI.IMAGE_NOT_AVAILABLE_URL :
-                TheMovieDbAPI.getImageUrlWithPath(currentMovie.getmImagePath());
-        Picasso.with(mContext).load(posterImageUrl).into(holder.mImageView);
+        String posterImageUrl = TheMovieDbAPI.getImageUrlWithPath( currentMovie.getmImagePath() );
+        Picasso.with(mContext)
+                .load(posterImageUrl)
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.poster_not_available)
+                .into(holder.mImageView);
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,14 +68,15 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
+
         public final ImageView mImageView;
+        public final View mView;
         public Movie mItem;
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
             mImageView = (ImageView) view.findViewById(R.id.imageViewPoster);
+            mView = view;
         }
     }
 }

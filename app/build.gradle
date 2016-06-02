@@ -10,7 +10,6 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-
         buildConfigField("String", "API_KEY", THEMOVIEDB_API_KEY)
     }
     buildTypes {
@@ -33,4 +32,6 @@ dependencies {
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.jakewharton:butterknife:8.0.1'
+
 }

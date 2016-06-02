@@ -10,6 +10,9 @@ import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.model.Movie;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieDetailsActivity extends AppCompatActivity {
 
     private final String LOG_TAG = this.getClass().getSimpleName();
@@ -22,17 +25,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private Movie mMovie;
 
-    ImageView mImageViewThumbnail;
-    TextView mTextViewTitle;
-    TextView mTextViewUserRating;
-    TextView mTextViewReleaseDate;
-    TextView mTextViewSynopsis;
+    @BindView(R.id.imageView_thumbnail) ImageView mImageViewThumbnail;
+    @BindView(R.id.textView_title) TextView mTextViewTitle;
+    @BindView(R.id.textView_user_ratings) TextView mTextViewUserRating;
+    @BindView(R.id.textView_release_date) TextView mTextViewReleaseDate;
+    @BindView(R.id.textView_plot_synopsis) TextView mTextViewSynopsis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-        linkUI();
+        ButterKnife.bind(this);
         if( getIntent() != null ){
             Movie m = getIntent().getExtras().getParcelable(Movie.MOVIE_ITEM_KEY);
             bindData( m );
@@ -48,14 +51,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
-    private void linkUI(){
-        mImageViewThumbnail = (ImageView)findViewById(R.id.imageView_thumbnail);
-        mTextViewTitle = (TextView) findViewById(R.id.textView_title);
-        mTextViewUserRating = (TextView) findViewById(R.id.textView_user_ratings);
-        mTextViewReleaseDate = (TextView) findViewById(R.id.textView_release_date);
-        mTextViewSynopsis = (TextView) findViewById(R.id.textView_plot_synopsis);
-    }
-
     private void bindData(Movie m){
 
         mMovie = m;
@@ -67,15 +62,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         mTextViewTitle.setText(title);
         mTextViewReleaseDate.setText(date);
-        mTextViewSynopsis.setText( synopsis.length() == 0 ?
-                getResources().getString(R.string.movie_no_plot_available)
-                : synopsis);
+        mTextViewSynopsis.setText( synopsis.length() == 0 ? getResources().getString(R.string.movie_no_plot_available) : synopsis);
         StringBuilder ratingString = new StringBuilder( Double.toString(rating) );
         ratingString.append( getResources().getString(R.string.movie_rating_denominator) );
         mTextViewUserRating.setText( ratingString.toString() );
-        String posterImageUrl = Movie.isInValidImageUrl(imageUrl) ? TheMovieDbAPI.IMAGE_NOT_AVAILABLE_URL :
-                TheMovieDbAPI.getImageUrlWithPath(imageUrl);
-        Picasso.with(getApplicationContext()).load(posterImageUrl).into(mImageViewThumbnail);
+
+        String posterImageUrl = TheMovieDbAPI.getImageUrlWithPath(imageUrl);
+        Picasso.with(getApplicationContext())
+                .load(posterImageUrl)
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.poster_not_available)
+                .into(mImageViewThumbnail);
 
     }
 }

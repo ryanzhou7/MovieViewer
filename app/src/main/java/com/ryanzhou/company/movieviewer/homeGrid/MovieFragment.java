@@ -103,18 +103,18 @@ public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkList
     }
 
     private int determineColumnCount(int configCode){
-        if (configCode == Configuration.ORIENTATION_LANDSCAPE) {
+        if (configCode == Configuration.ORIENTATION_LANDSCAPE)
             return 3;
-        }
+        //is Configuration.ORIENTATION_PORTRAIT
         return 2;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
+        if (context instanceof OnListFragmentInteractionListener)
             mListener = (OnListFragmentInteractionListener) context;
-        } else {
+        else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
         }

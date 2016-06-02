@@ -85,14 +85,6 @@ public class Movie implements Parcelable{
         this.mReleaseDate = mReleaseDate;
     }
 
-    public Boolean isInValidImageUrl(){
-        return getmImagePath().contains("null") ? true: false;
-    }
-
-    public static Boolean isInValidImageUrl(String mImagePath){
-        return mImagePath.contains("null") ? true: false;
-    }
-
     @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
