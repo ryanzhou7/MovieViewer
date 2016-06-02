@@ -5,13 +5,12 @@ import android.os.Parcelable;
 
 /**
  * Created by ryanzhou on 5/9/16.
- * Followed tutorial @
- * http://www.survivingwithandroid.com/2015/05/android-parcelable-tutorial-list-class-2.html
- * for parceable implementation
  */
 public class Movie implements Parcelable{
 
     public static final String MOVIES_LIST_KEY = "moviesListKey";
+    public static final String MOVIE_ITEM_KEY = "movieItemKey";
+
     private String mOriginalTitle;
     private String mImagePath;
     private String mSynopsis;

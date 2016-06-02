@@ -9,5 +9,6 @@
     <string name="movie_release_date">Release Date:</string>
     <string name="movie_plot_synopsis">Plot Synopsis:</string>
     <string name="movie_rating_denominator">/10.0</string>
+    <string name="movie_no_plot_available"> Not available</string>
 
 </resources>

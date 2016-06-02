@@ -4,5 +4,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/movie_grid_container"
-    tools:context="com.ryanzhou.company.movieviewer.MainActivity">
+    tools:context=".homeGrid.MainActivity">
 </FrameLayout>
