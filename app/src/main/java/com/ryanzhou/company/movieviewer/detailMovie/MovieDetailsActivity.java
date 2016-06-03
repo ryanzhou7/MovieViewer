@@ -10,9 +10,6 @@ import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.model.Movie;
 import com.squareup.picasso.Picasso;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MovieDetailsActivity extends AppCompatActivity {
 
     private final String LOG_TAG = this.getClass().getSimpleName();
@@ -23,24 +20,25 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public static final String USER_RATING = "userRating";
     public static final String RELEASE_DATE = "releaseDate";
 
-    private Movie mMovie;
-
-    @BindView(R.id.imageView_thumbnail) ImageView mImageViewThumbnail;
-    @BindView(R.id.textView_title) TextView mTextViewTitle;
-    @BindView(R.id.textView_user_ratings) TextView mTextViewUserRating;
-    @BindView(R.id.textView_release_date) TextView mTextViewReleaseDate;
-    @BindView(R.id.textView_plot_synopsis) TextView mTextViewSynopsis;
+    Movie mMovie;
+    ImageView mImageViewThumbnail;
+    TextView mTextViewTitle;
+    TextView mTextViewUserRating;
+    TextView mTextViewReleaseDate;
+    TextView mTextViewSynopsis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-        ButterKnife.bind(this);
+        linkUI();
         if( getIntent() != null ){
+            //we have data passed in
             Movie m = getIntent().getExtras().getParcelable(Movie.MOVIE_ITEM_KEY);
             bindData( m );
         }
         else if( !savedInstanceState.isEmpty() ){
+            //we have saved instance data
             bindData( (Movie) savedInstanceState.getParcelable(Movie.MOVIE_ITEM_KEY) );
         }
     }
@@ -49,6 +47,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState){
         outState.putParcelable(Movie.MOVIE_ITEM_KEY, mMovie);
         super.onSaveInstanceState(outState);
+    }
+
+    private void linkUI(){
+        mImageViewThumbnail = (ImageView)findViewById(R.id.imageView_thumbnail);
+        mTextViewTitle = (TextView) findViewById(R.id.textView_title);
+        mTextViewUserRating = (TextView) findViewById(R.id.textView_user_ratings);
+        mTextViewReleaseDate = (TextView) findViewById(R.id.textView_release_date);
+        mTextViewSynopsis = (TextView) findViewById(R.id.textView_plot_synopsis);
     }
 
     private void bindData(Movie m){
@@ -60,12 +66,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
         Double rating = mMovie.getmUserRating();
         String imageUrl = mMovie.getmImagePath();
 
-        mTextViewTitle.setText(title);
-        mTextViewReleaseDate.setText(date);
-        mTextViewSynopsis.setText( synopsis.length() == 0 ? getResources().getString(R.string.movie_no_plot_available) : synopsis);
+        mTextViewTitle.setText( validateData(title) );
+        mTextViewReleaseDate.setText( validateData(date) );
+        mTextViewSynopsis.setText( validateData(synopsis) );
         StringBuilder ratingString = new StringBuilder( Double.toString(rating) );
         ratingString.append( getResources().getString(R.string.movie_rating_denominator) );
-        mTextViewUserRating.setText( ratingString.toString() );
+        mTextViewUserRating.setText( validateData(ratingString.toString() ) );
 
         String posterImageUrl = TheMovieDbAPI.getImageUrlWithPath(imageUrl);
         Picasso.with(getApplicationContext())
@@ -75,4 +81,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .into(mImageViewThumbnail);
 
     }
+
+    private String validateData( String s){
+        return s == null || s.isEmpty() ?
+                getResources().getString(R.string.movie_detail_not_available): s;
+    }
+
 }
