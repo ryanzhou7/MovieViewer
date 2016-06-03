@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.ryanzhou.company.movieviewer.APIs.TheMovieDbAPI;
 import com.ryanzhou.company.movieviewer.R;
+import com.ryanzhou.company.movieviewer.helper.ItemOffsetDecoration;
 import com.ryanzhou.company.movieviewer.model.Movie;
 
 import java.util.ArrayList;
@@ -92,6 +93,8 @@ public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkList
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(context, R.dimen.movie_item_offset);
+                mRecyclerView.addItemDecoration(itemDecoration);
             }
             mMyMovieRecyclerViewAdapter = new MyMovieRecyclerViewAdapter(
                     savedInstanceMovies != null ? savedInstanceMovies : new ArrayList<Movie>(),
