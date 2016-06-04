@@ -85,6 +85,12 @@ public class Movie implements Parcelable{
         this.mReleaseDate = mReleaseDate;
     }
 
+    public Boolean isValidImageUrl(){
+        if( mImagePath == null || mImagePath.equals("null") || mImagePath.isEmpty() )
+            return false;
+        return true;
+    }
+
     @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();

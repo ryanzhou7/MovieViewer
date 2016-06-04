@@ -2,6 +2,7 @@ package com.ryanzhou.company.movieviewer.detailMovie;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -73,13 +74,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
         ratingString.append( getResources().getString(R.string.movie_rating_denominator) );
         mTextViewUserRating.setText( validateData(ratingString.toString() ) );
 
-        String posterImageUrl = TheMovieDbAPI.getImageUrlWithPath(imageUrl);
-        Picasso.with(getApplicationContext())
-                .load(posterImageUrl)
-                .placeholder(R.drawable.loading)
-                .error(R.drawable.poster_not_available)
-                .into(mImageViewThumbnail);
-
+        if( mMovie.isValidImageUrl() ){
+            mImageViewThumbnail.setVisibility(View.VISIBLE);
+            String posterImageUrl = TheMovieDbAPI.getImageUrlWithPath(imageUrl);
+            Picasso.with(getApplicationContext())
+                    .load(posterImageUrl)
+                    .placeholder(R.drawable.loading)
+                    .into(mImageViewThumbnail);
+        }
     }
 
     private String validateData( String s){
