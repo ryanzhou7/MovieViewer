@@ -11,4 +11,8 @@
     <string name="movie_rating_denominator">/10.0</string>
     <string name="movie_detail_not_available"> Not available</string>
 
+    <string name="movie_trailer">Trailers</string>
+    <string name="movie_reviews">Reviews</string>
+    <string name="more_info">More</string>
+
 </resources>

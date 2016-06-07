@@ -32,7 +32,9 @@ public class TheMovieDbAPI implements MovieDataNetworker {
     public final static String IMAGE_NOT_AVAILABLE_URL =
             "https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg";
 
-    final static String IMAGE_SIZE = "w342";
+    public final static String IMAGE_SIZE_LARGE = "w342";
+    public final static String IMAGE_SIZE_SMALL = "w185";
+    // "w92", "w154", "w185", "w342", "w500", "w780", "original"
 
     final static String BASE_URL = "https://api.themoviedb.org";
     final static String VERSION = "/3";
@@ -63,22 +65,38 @@ public class TheMovieDbAPI implements MovieDataNetworker {
         }
     }
 
-    public static String getImageUrlWithPath(String imagePath){
+    public static String getImageUrlWithPathAndSize(String imagePath, String size){
         StringBuilder fullImageUrl = new StringBuilder(BASE_IMAGE_URL);
-        return fullImageUrl.append(IMAGE_SIZE).append(imagePath).toString();
+        return fullImageUrl.append(size).append(imagePath).toString();
     }
 
     @Override
-    public void getPopularMovies() {
+    public void getMoviesSortPopular() {
         FetchSortedDataTask f = new FetchSortedDataTask();
         f.execute(POPULARITY);
     }
 
     @Override
-    public void getHighestRateMovies() {
+    public void getMoviesSortRatings() {
         FetchSortedDataTask f = new FetchSortedDataTask();
         f.execute(VOTE_AVERAGE);
     }
+
+    @Override
+    public void getPopularMovies() {
+        //TODO query via /movies/popular
+    }
+
+    @Override
+    public void getTopRatedMovies() {
+        //TODO query via /movies/top_rated
+    }
+
+    @Override
+    public void getReviewsMovie(String movieID) {
+
+    }
+
 
     public class FetchSortedDataTask extends AsyncTask<String, Void, List<Movie> >{
         @Override
@@ -104,8 +122,8 @@ public class TheMovieDbAPI implements MovieDataNetworker {
                         .appendQueryParameter(PAGE_LIMIT_PARAM, PAGE_LIMIT)
                         .build();
 
+                //URL url = new URL("http://api.themoviedb.org/3/movie/49026/reviews?api_key=499e327a20a603ac8193ae2bf20a2702");
                 URL url = new URL(builtUri.toString());
-                // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -114,7 +132,6 @@ public class TheMovieDbAPI implements MovieDataNetworker {
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
-                    // Nothing to do.
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -132,11 +149,9 @@ public class TheMovieDbAPI implements MovieDataNetworker {
                     return null;
                 }
                 responseJsonStr = buffer.toString();
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the data, there's no point in attemping
-                // to parse it.
+                return getMovieDataFromJson(responseJsonStr);
+            } catch (Exception e ) {
+                Log.e(LOG_TAG, "Error " + e.toString() );
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -150,15 +165,6 @@ public class TheMovieDbAPI implements MovieDataNetworker {
                     }
                 }
             }
-
-            try {
-                return getMovieDataFromJson(responseJsonStr);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-            // This will only happen if there was an error getting or parsing
-            return null;
         }
 
         @Override
@@ -171,6 +177,31 @@ public class TheMovieDbAPI implements MovieDataNetworker {
             }
         }
 
+    }
+
+    private List<Movie> getMovieReviewsDataFromJson(String responseJsonStr) throws JSONException {
+        try {
+
+            final String RESULTS = "results";
+            JSONObject responseJson = new JSONObject(responseJsonStr);
+            JSONArray resultsArray = responseJson.getJSONArray(RESULTS);
+            for(int i = 0; i< resultsArray.length(); i++){
+                JSONObject currentObject = resultsArray.getJSONObject(i);
+                Log.d(LOG_TAG, currentObject.toString() );
+                currentObject.getString("author");
+                currentObject.getString("content");
+
+                //http://api.themoviedb.org/3/movie/49026/videos?api_key=499e327a20a603ac8193ae2bf20a2702
+                //key, name
+            }
+            Log.d(LOG_TAG, "Num results: " + resultsArray.length() );
+
+            return getMovieDataFromJson(responseJsonStr);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private List<Movie> getMovieDataFromJson(String responseJsonStr) throws JSONException{

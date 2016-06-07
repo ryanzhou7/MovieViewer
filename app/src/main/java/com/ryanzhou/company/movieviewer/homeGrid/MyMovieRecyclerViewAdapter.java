@@ -40,7 +40,8 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = getmValues().get(position);
         Movie currentMovie = holder.mItem;
-        String posterImageUrl = TheMovieDbAPI.getImageUrlWithPath( currentMovie.getmImagePath() );
+        String posterImageUrl = TheMovieDbAPI.getImageUrlWithPathAndSize( currentMovie.getmImagePath(),
+                TheMovieDbAPI.IMAGE_SIZE_LARGE);
         Picasso.with(mContext)
                 .load(posterImageUrl)
                 .placeholder(R.drawable.loading)

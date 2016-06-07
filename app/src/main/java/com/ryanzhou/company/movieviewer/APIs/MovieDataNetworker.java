@@ -5,7 +5,10 @@ package com.ryanzhou.company.movieviewer.APIs;
  */
 public interface MovieDataNetworker {
 
+    public void getMoviesSortPopular();
+    public void getMoviesSortRatings();
     public void getPopularMovies();
-    public void getHighestRateMovies();
+    public void getTopRatedMovies();
+    public void getReviewsMovie(String movieID);
 
 }

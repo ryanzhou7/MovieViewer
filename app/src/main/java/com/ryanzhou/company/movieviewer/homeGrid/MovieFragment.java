@@ -43,7 +43,7 @@ public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkList
         setHasOptionsMenu(true);
         if(savedInstanceState == null){
             mTheMovieDbAPI = new TheMovieDbAPI(this);
-            mTheMovieDbAPI.getHighestRateMovies();
+            mTheMovieDbAPI.getMoviesSortPopular();
         }
         else{
             savedInstanceMovies = savedInstanceState.getParcelableArrayList(Movie.MOVIES_LIST_KEY);
@@ -72,10 +72,10 @@ public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkList
             mTheMovieDbAPI = new TheMovieDbAPI(this);
         }
         if (id == R.id.action_filter_popularity) {
-            mTheMovieDbAPI.getPopularMovies();
+            mTheMovieDbAPI.getMoviesSortPopular();
         }
         else if( id == R.id.action_filter_ratings ){
-            mTheMovieDbAPI.getHighestRateMovies();
+            mTheMovieDbAPI.getMoviesSortRatings();
         }
         return super.onOptionsItemSelected(item);
     }
