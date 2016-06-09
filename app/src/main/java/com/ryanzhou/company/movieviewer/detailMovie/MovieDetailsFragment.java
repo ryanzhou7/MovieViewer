@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ryanzhou.company.movieviewer.APIs.TheMovieDbAPI;
+import com.ryanzhou.company.movieviewer.APIs.TheMovieDb;
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.model.Movie;
 import com.squareup.picasso.Picasso;
@@ -121,13 +121,16 @@ public class MovieDetailsFragment extends Fragment {
 
         if( mMovie.isValidImageUrl() ){
             mImageViewThumbnail.setVisibility(View.VISIBLE);
-            String posterImageUrl = TheMovieDbAPI.getImageUrlWithPathAndSize(imageUrl,
-                    TheMovieDbAPI.IMAGE_SIZE_SMALL);
+            String posterImageUrl = TheMovieDb.getImageUrlWithPathAndSize(imageUrl,
+                    TheMovieDb.IMAGE_SIZE_SMALL);
             Picasso.with(getContext())
                     .load(posterImageUrl)
                     .placeholder(R.drawable.loading)
                     .into(mImageViewThumbnail);
         }
+
+        new TheMovieDb(null).getReviewsWithId(mMovie.getmMovieID());
+
     }
 
     private String validateData( String s){

@@ -22,8 +22,9 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.OnL
                     .add(R.id.movie_grid_container, new MovieFragment()).commit();
         }
 
-        Intent intent = new Intent(getApplicationContext(), MovieDetailsActivity.class);
-        intent.putExtra(Movie.MOVIE_ITEM_KEY, new Movie("title", "null", "synopsis", "date", 4.0));
+        //TODO delete testing code
+        //Intent intent = new Intent(getApplicationContext(), MovieDetailsActivity.class);
+        //intent.putExtra(Movie.MOVIE_ITEM_KEY, new Movie("title", "null", "synopsis", "date", 4.0, 1));
         //startActivity(intent);
 
     }

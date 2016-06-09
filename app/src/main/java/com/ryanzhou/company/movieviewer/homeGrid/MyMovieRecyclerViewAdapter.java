@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.ryanzhou.company.movieviewer.APIs.TheMovieDbAPI;
+import com.ryanzhou.company.movieviewer.APIs.TheMovieDb;
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.model.Movie;
 import com.squareup.picasso.Picasso;
@@ -40,8 +40,8 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = getmValues().get(position);
         Movie currentMovie = holder.mItem;
-        String posterImageUrl = TheMovieDbAPI.getImageUrlWithPathAndSize( currentMovie.getmImagePath(),
-                TheMovieDbAPI.IMAGE_SIZE_LARGE);
+        String posterImageUrl = TheMovieDb.getImageUrlWithPathAndSize( currentMovie.getmImagePath(),
+                TheMovieDb.IMAGE_SIZE_LARGE);
         Picasso.with(mContext)
                 .load(posterImageUrl)
                 .placeholder(R.drawable.loading)

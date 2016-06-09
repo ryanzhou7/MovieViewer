@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,15 +16,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.ryanzhou.company.movieviewer.APIs.TheMovieDbAPI;
+import com.ryanzhou.company.movieviewer.APIs.TheMovieDB2;
+import com.ryanzhou.company.movieviewer.APIs.TheMovieDb;
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.helper.ItemOffsetDecoration;
 import com.ryanzhou.company.movieviewer.model.Movie;
+import com.ryanzhou.company.movieviewer.model.MovieReview;
+import com.ryanzhou.company.movieviewer.model.MovieReviews;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkListener{
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class MovieFragment extends Fragment implements TheMovieDb.NetworkListener{
 
     private int mColumnCount = 2;
     public final String LOG_TAG = this.getClass().getSimpleName();
@@ -33,7 +43,7 @@ public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkList
     private MyMovieRecyclerViewAdapter mMyMovieRecyclerViewAdapter;
     private List<Movie> savedInstanceMovies;
 
-    private TheMovieDbAPI mTheMovieDbAPI;
+    private TheMovieDb mTheMovieDb;
 
     public MovieFragment() {}
 
@@ -42,8 +52,8 @@ public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkList
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         if(savedInstanceState == null){
-            mTheMovieDbAPI = new TheMovieDbAPI(this);
-            mTheMovieDbAPI.getMoviesSortPopular();
+            mTheMovieDb = new TheMovieDb(this);
+            mTheMovieDb.getMoviesSortPopular();
         }
         else{
             savedInstanceMovies = savedInstanceState.getParcelableArrayList(Movie.MOVIES_LIST_KEY);
@@ -68,14 +78,39 @@ public class MovieFragment extends Fragment implements TheMovieDbAPI.NetworkList
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if( mTheMovieDbAPI == null){
-            mTheMovieDbAPI = new TheMovieDbAPI(this);
+        if( mTheMovieDb == null){
+            mTheMovieDb = new TheMovieDb(this);
         }
         if (id == R.id.action_filter_popularity) {
-            mTheMovieDbAPI.getMoviesSortPopular();
+
+            //http://api.themoviedb.org/3/movie/49026/reviews?api_key=499e327a20a603ac8193ae2bf20a2702
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl( "https://api.themoviedb.org/" )
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            // prepare call in Retrofit 2.0
+            String apiKey = "499e327a20a603ac8193ae2bf20a2702";
+            TheMovieDB2 mdb = retrofit.create(TheMovieDB2.class);
+            Call<MovieReviews> call = mdb.loadMovieReviews(String.valueOf(49026), apiKey);
+            //asynchronous call
+            call.enqueue(new Callback<MovieReviews>() {
+                @Override
+                public void onResponse(Call<MovieReviews> call, Response<MovieReviews> response) {
+                    for(MovieReview r :response.body().items)
+                        Log.d(LOG_TAG, r.getmAuthor());
+                }
+
+                @Override
+                public void onFailure(Call<MovieReviews> call, Throwable t) {
+                    Log.d(LOG_TAG, t.toString() );
+                }
+            });
+
+            //mTheMovieDb.getMoviesSortPopular();
         }
         else if( id == R.id.action_filter_ratings ){
-            mTheMovieDbAPI.getMoviesSortRatings();
+            //mTheMovieDb.getMoviesSortRatings();
         }
         return super.onOptionsItemSelected(item);
     }

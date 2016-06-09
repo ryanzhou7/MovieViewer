@@ -16,21 +16,27 @@ public class Movie implements Parcelable{
     private String mSynopsis;
     private Double mUserRating;
     private String mReleaseDate;
+    private long mMovieID;
 
-    public Movie(String title, String imagePath, String synopsis, String releaseDate, Double userRating){
+    public Movie(String title, String imagePath, String synopsis, String releaseDate,
+                 Double userRating,
+                 long movieID){
         mOriginalTitle = title;
         mImagePath = imagePath;
         mSynopsis = synopsis;
         mReleaseDate = releaseDate;
         mUserRating = userRating;
+        mMovieID = movieID;
     }
 
     protected Movie(Parcel in) {
+        //needs to be chronological order
         mOriginalTitle = in.readString();
         mImagePath = in.readString();
         mSynopsis = in.readString();
         mReleaseDate = in.readString();
         mUserRating = in.readDouble();
+        mMovieID = in.readLong();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -98,7 +104,8 @@ public class Movie implements Parcelable{
         builder.append(getmOriginalTitle() + tab);
         builder.append(getmUserRating() + tab);
         builder.append(getmReleaseDate() + tab);
-        builder.append(getmSynopsis());
+        builder.append(getmSynopsis() + tab);
+        builder.append(getmMovieID());
         return builder.toString();
     }
 
@@ -114,5 +121,14 @@ public class Movie implements Parcelable{
         dest.writeString(mSynopsis);
         dest.writeString(mReleaseDate);
         dest.writeDouble(mUserRating);
+        dest.writeLong(mMovieID);
+    }
+
+    public long getmMovieID() {
+        return mMovieID;
+    }
+
+    public void setmMovieID(long mMovieID) {
+        this.mMovieID = mMovieID;
     }
 }
