@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,12 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ryanzhou.company.movieviewer.APIs.TheMovieDB2;
-import com.ryanzhou.company.movieviewer.APIs.TheMovieDb;
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.helper.ItemOffsetDecoration;
 import com.ryanzhou.company.movieviewer.model.Movie;
-import com.ryanzhou.company.movieviewer.model.MovieReview;
-import com.ryanzhou.company.movieviewer.model.MovieReviews;
+import com.ryanzhou.company.movieviewer.model.Movies;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,17 +30,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MovieFragment extends Fragment implements TheMovieDb.NetworkListener{
+public class MovieFragment extends Fragment implements Callback<Movies>{
 
-    private int mColumnCount = 2;
     public final String LOG_TAG = this.getClass().getSimpleName();
-
+    private int mColumnCount = 2;
     private RecyclerView mRecyclerView;
     private OnListFragmentInteractionListener mListener;
     private MyMovieRecyclerViewAdapter mMyMovieRecyclerViewAdapter;
     private List<Movie> savedInstanceMovies;
-
-    private TheMovieDb mTheMovieDb;
 
     public MovieFragment() {}
 
@@ -52,19 +46,38 @@ public class MovieFragment extends Fragment implements TheMovieDb.NetworkListene
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         if(savedInstanceState == null){
-            mTheMovieDb = new TheMovieDb(this);
-            mTheMovieDb.getMoviesSortPopular();
+            loadPopularMoviesToList();
         }
         else{
-            savedInstanceMovies = savedInstanceState.getParcelableArrayList(Movie.MOVIES_LIST_KEY);
+            savedInstanceMovies = savedInstanceState.getParcelableArrayList(Movies.MOVIES_LIST_KEY);
         }
     }
 
+    private Retrofit buildRetrofitWithUrl( String baseUrl){
+        return new Retrofit.Builder()
+                .baseUrl( baseUrl )
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    private void loadTopRatedMoviesToList(){
+        Retrofit retrofit = buildRetrofitWithUrl( TheMovieDB2.BASE_URL );
+        TheMovieDB2 mdb = retrofit.create(TheMovieDB2.class);
+        Call<Movies> call = mdb.loadTopRatedMovies();
+        call.enqueue(this);
+    }
+
+    private void loadPopularMoviesToList(){
+        Retrofit retrofit = buildRetrofitWithUrl( TheMovieDB2.BASE_URL );
+        TheMovieDB2 mdb = retrofit.create(TheMovieDB2.class);
+        Call<Movies> call = mdb.loadPopularMovies();
+        call.enqueue(this);
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState){
         if( mMyMovieRecyclerViewAdapter != null && mMyMovieRecyclerViewAdapter.getmValues() != null ){
-            outState.putParcelableArrayList(Movie.MOVIES_LIST_KEY,
+            outState.putParcelableArrayList(Movies.MOVIES_LIST_KEY,
                     (ArrayList<? extends Parcelable>) mMyMovieRecyclerViewAdapter.getmValues());
         }
         super.onSaveInstanceState(outState);
@@ -78,40 +91,10 @@ public class MovieFragment extends Fragment implements TheMovieDb.NetworkListene
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if( mTheMovieDb == null){
-            mTheMovieDb = new TheMovieDb(this);
-        }
-        if (id == R.id.action_filter_popularity) {
-
-            //http://api.themoviedb.org/3/movie/49026/reviews?api_key=499e327a20a603ac8193ae2bf20a2702
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl( "https://api.themoviedb.org/" )
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            // prepare call in Retrofit 2.0
-            String apiKey = "499e327a20a603ac8193ae2bf20a2702";
-            TheMovieDB2 mdb = retrofit.create(TheMovieDB2.class);
-            Call<MovieReviews> call = mdb.loadMovieReviews(String.valueOf(49026), apiKey);
-            //asynchronous call
-            call.enqueue(new Callback<MovieReviews>() {
-                @Override
-                public void onResponse(Call<MovieReviews> call, Response<MovieReviews> response) {
-                    for(MovieReview r :response.body().items)
-                        Log.d(LOG_TAG, r.getmAuthor());
-                }
-
-                @Override
-                public void onFailure(Call<MovieReviews> call, Throwable t) {
-                    Log.d(LOG_TAG, t.toString() );
-                }
-            });
-
-            //mTheMovieDb.getMoviesSortPopular();
-        }
-        else if( id == R.id.action_filter_ratings ){
-            //mTheMovieDb.getMoviesSortRatings();
-        }
+        if (id == R.id.action_filter_popularity)
+            loadPopularMoviesToList();
+        else if( id == R.id.action_filter_ratings )
+            loadTopRatedMoviesToList();
         return super.onOptionsItemSelected(item);
     }
 
@@ -164,12 +147,19 @@ public class MovieFragment extends Fragment implements TheMovieDb.NetworkListene
         mListener = null;
     }
 
+
+    //Callback<Movies> implementation
     @Override
-    public void onPostExecuteDone(List<Movie> list) {
+    public void onResponse(Call<Movies> call, Response<Movies> response) {
         List<Movie> currentList = mMyMovieRecyclerViewAdapter.getmValues();
         currentList.clear();
-        currentList.addAll(list);
+        currentList.addAll(response.body().items);
         mMyMovieRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onFailure(Call<Movies> call, Throwable t) {
+
     }
 
     public interface OnListFragmentInteractionListener {

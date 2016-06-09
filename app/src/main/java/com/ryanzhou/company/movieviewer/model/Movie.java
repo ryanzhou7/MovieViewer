@@ -3,20 +3,21 @@ package com.ryanzhou.company.movieviewer.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by ryanzhou on 5/9/16.
  */
 public class Movie implements Parcelable{
 
-    public static final String MOVIES_LIST_KEY = "moviesListKey";
     public static final String MOVIE_ITEM_KEY = "movieItemKey";
 
-    private String mOriginalTitle;
-    private String mImagePath;
-    private String mSynopsis;
-    private Double mUserRating;
-    private String mReleaseDate;
-    private long mMovieID;
+    @SerializedName("original_title") private String mOriginalTitle;
+    @SerializedName("poster_path") private String mImagePath;
+    @SerializedName("overview") private String mSynopsis;
+    @SerializedName("vote_average") private Double mUserRating;
+    @SerializedName("release_date") private String mReleaseDate;
+    @SerializedName("id") private long mMovieID;
 
     public Movie(String title, String imagePath, String synopsis, String releaseDate,
                  Double userRating,

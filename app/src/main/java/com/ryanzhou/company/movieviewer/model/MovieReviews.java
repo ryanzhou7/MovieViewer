@@ -12,12 +12,9 @@ import java.util.List;
  */
 public class MovieReviews {
 
-    //For instance, if our property name matches that of the JSON key,
-    // then we do not need to annotate the attributes.
-    //However, if we have a different name we wish to use,
-    // we can simply annotate the declaration with
-    @SerializedName("results")
-    public List<MovieReview> items;
+    public static final String MOVIEREVIEWS_LIST_KEY = "moviesReviewsListKey";
+    //"results" is key for json data to be put into items
+    @SerializedName("results") public List<MovieReview> items;
     public MovieReviews(){
         items = new ArrayList<>();
     }
@@ -27,6 +24,4 @@ public class MovieReviews {
         MovieReviews movieReviews = gson.fromJson(response, MovieReviews.class);
         return movieReviews;
     }
-
-    //
 }
