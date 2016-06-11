@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.ryanzhou.company.movieviewer.APIs.TheMovieDB2;
+import com.ryanzhou.company.movieviewer.API.TheMovieDB;
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.model.Movie;
 import com.squareup.picasso.Picasso;
@@ -39,7 +39,7 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
     }
 
     public String getImageUrlWithPathAndSize(String imagePath, String size){
-        StringBuilder fullImageUrl = new StringBuilder(TheMovieDB2.BASE_IMAGE_URL);
+        StringBuilder fullImageUrl = new StringBuilder(TheMovieDB.BASE_IMAGE_URL);
         return fullImageUrl.append(size).append(imagePath).toString();
     }
 
@@ -48,7 +48,7 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
         holder.mItem = getmValues().get(position);
         Movie currentMovie = holder.mItem;
         String posterImageUrl = getImageUrlWithPathAndSize(currentMovie.getmImagePath(),
-                TheMovieDB2.IMAGE_SIZE_LARGE);
+                TheMovieDB.IMAGE_SIZE_LARGE);
         Picasso.with(mContext)
                 .load(posterImageUrl)
                 .placeholder(R.drawable.loading)

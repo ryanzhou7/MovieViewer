@@ -21,12 +21,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.OnL
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.movie_grid_container, new MovieFragment()).commit();
         }
-
-        //TODO delete testing code
-        //Intent intent = new Intent(getApplicationContext(), MovieDetailsActivity.class);
-        //intent.putExtra(Movie.MOVIE_ITEM_KEY, new Movie("title", "null", "synopsis", "date", 4.0, 1));
-        //startActivity(intent);
-
     }
     @Override
     public void onListFragmentInteraction(Movie m){

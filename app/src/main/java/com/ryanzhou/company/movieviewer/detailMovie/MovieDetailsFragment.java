@@ -1,9 +1,9 @@
 package com.ryanzhou.company.movieviewer.detailMovie;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,14 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.ryanzhou.company.movieviewer.APIs.TheMovieDB2;
+import com.ryanzhou.company.movieviewer.API.TheMovieDB;
 import com.ryanzhou.company.movieviewer.R;
-import com.ryanzhou.company.movieviewer.helper.ItemOffsetDecoration;
 import com.ryanzhou.company.movieviewer.model.Movie;
 import com.ryanzhou.company.movieviewer.model.MovieReview;
 import com.ryanzhou.company.movieviewer.model.MovieReviews;
+import com.ryanzhou.company.movieviewer.model.MovieTrailer;
+import com.ryanzhou.company.movieviewer.model.MovieTrailers;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -31,8 +34,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MovieDetailsFragment extends Fragment implements Callback<MovieReviews>{
-
+public class MovieDetailsFragment extends Fragment{
 
     private final String LOG_TAG = this.getClass().getSimpleName();
 
@@ -43,10 +45,12 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieRevi
     public static final String RELEASE_DATE = "releaseDate";
 
     private MovieDetailsFragment.OnFragmentInteractionListener mListener;
-    private MyMovieReviewRecyclerViewAdapter myMovieReviewRecyclerViewAdapter;
+    private MovieReviewRecyclerViewAdapter mMovieReviewRecyclerViewAdapter;
+    private MovieTrailerRecyclerViewAdapter mMovieTrailerRecyclerViewAdapter;
     private List<MovieReview> savedInstanceMovieReviews;
+    private List<MovieTrailer> savedInstanceMovieTrailers;
     private RecyclerView mRecyclerView;
-    private int mColumnCount = 2;
+    private int mColumnCount = 1;
 
     Movie mMovie;
     ImageView mImageViewThumbnail;
@@ -54,6 +58,9 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieRevi
     TextView mTextViewUserRating;
     TextView mTextViewReleaseDate;
     TextView mTextViewSynopsis;
+    RadioGroup mRadioListInfoGroup;
+    RadioButton mRadioButtonMovieTrailer;
+    RadioButton mRadioButtonMovieReview;
 
     public static MovieDetailsFragment newInstance( Bundle bundle ) {
         MovieDetailsFragment f = new MovieDetailsFragment();
@@ -72,32 +79,28 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieRevi
         View view = inflater.inflate(R.layout.fragment_detail_movie, container, false);
         linkUI(view);
         if( getArguments() != null ){
-            //we have data passed in
-            Movie m = getArguments().getParcelable(Movie.MOVIE_ITEM_KEY);
-            bindData( m );
-        }
-        else if( !savedInstanceState.isEmpty() ){
-            //we have saved instance data
-            bindData( (Movie) savedInstanceState.getParcelable(Movie.MOVIE_ITEM_KEY) );
+            //we have movie data passed in
+            mMovie = getArguments().getParcelable(Movie.MOVIE_ITEM_KEY);
+            bindData( mMovie );
         }
 
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            mRecyclerView = (RecyclerView) view;
-            mColumnCount = determineColumnCount( getResources().getConfiguration().orientation );
-            if (mColumnCount <= 1) {
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-                ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(context, R.dimen.movie_item_offset);
-                mRecyclerView.addItemDecoration(itemDecoration);
-            }
-            myMovieReviewRecyclerViewAdapter = new MyMovieReviewRecyclerViewAdapter(
-                    savedInstanceMovieReviews != null ? savedInstanceMovieReviews : new ArrayList<MovieReview>(),
-                    mListener, context);
-            mRecyclerView.setAdapter(myMovieReviewRecyclerViewAdapter);
-            savedInstanceMovieReviews = null;
+        setRecyclerLayout(view);
+        setRecyclerAdapter();
+
+        if( savedInstanceState != null ){
+            //we have saved instance data
+            bindData( (Movie) savedInstanceState.getParcelable(Movie.MOVIE_ITEM_KEY) );
+            savedInstanceMovieReviews =
+                    savedInstanceState.getParcelableArrayList(MovieReviews.MOVIEREVIEWS_LIST_KEY);
+            savedInstanceMovieTrailers =
+                    savedInstanceState.getParcelableArrayList(MovieTrailers.MOVIETRAILERS_LIST_KEY);
         }
+        else{
+            //we have no saved instance data, need to do call for moviewReviews (default display option)
+            loadMovieReviewsWithMovieID(mMovie.getmMovieID());
+        }
+        //TODO figure out why I set this to null?
+        //savedInstanceMovieReviews = null;
         return view;
     }
 
@@ -124,28 +127,6 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieRevi
         mListener = null;
     }
 
-    //Retrofit callback
-    @Override
-    public void onResponse(Call<MovieReviews> call, Response<MovieReviews> response) {
-
-        //List<Movie> currentList = mMyMovieRecyclerViewAdapter.getmValues();
-        //currentList.clear();
-        //currentList.addAll(response.body().items);
-        //mMyMovieRecyclerViewAdapter.notifyDataSetChanged();
-
-    }
-
-    private int determineColumnCount(int configCode){
-        if (configCode == Configuration.ORIENTATION_LANDSCAPE)
-            return 3;
-        //is Configuration.ORIENTATION_PORTRAIT
-        return 2;
-    }
-
-    @Override
-    public void onFailure(Call<MovieReviews> call, Throwable t) {
-
-    }
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
@@ -154,6 +135,10 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieRevi
     @Override
     public void onSaveInstanceState(Bundle outState){
         outState.putParcelable(Movie.MOVIE_ITEM_KEY, mMovie);
+        if( mMovieReviewRecyclerViewAdapter != null && mMovieReviewRecyclerViewAdapter.getmMovieReviewValues() != null ){
+            outState.putParcelableArrayList(MovieReviews.MOVIEREVIEWS_LIST_KEY,
+                    (ArrayList<? extends Parcelable>) mMovieReviewRecyclerViewAdapter.getmMovieReviewValues());
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -163,10 +148,53 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieRevi
         mTextViewUserRating = (TextView) v.findViewById(R.id.textView_user_ratings);
         mTextViewReleaseDate = (TextView) v.findViewById(R.id.textView_release_date);
         mTextViewSynopsis = (TextView) v.findViewById(R.id.textView_plot_synopsis);
+        mRadioListInfoGroup = (RadioGroup) v.findViewById(R.id.radioGroupListView);
+        mRadioListInfoGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.radioButtonReviews:
+                        switchListToMovieReviews();
+                        break;
+                    case R.id.radioButtonTrailer:
+                        switchListToMovieTrailers();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        mRadioButtonMovieReview = (RadioButton) v.findViewById(R.id.radioButtonReviews);
+        mRadioButtonMovieTrailer = (RadioButton) v.findViewById(R.id.radioButtonTrailer);
+    }
+
+    private void switchListToMovieReviews() {
+        if( savedMovieReviewsDataExists() ){
+
+        }else{
+            loadMovieReviewsWithMovieID(mMovie.getmMovieID());
+        }
+    }
+
+    private boolean savedMovieReviewsDataExists() {
+        return savedInstanceMovieReviews == null? false : true;
+    }
+
+
+    private void switchListToMovieTrailers(){
+        if( savedMovieTrailersDataExists() ){
+
+        }else{
+            loadMovieTrailerIDsWithMovieID(mMovie.getmMovieID());
+        }
+
+    }
+
+    private boolean savedMovieTrailersDataExists() {
+        return savedInstanceMovieTrailers == null? false : true;
     }
 
     private void bindData(Movie m){
-
         mMovie = m;
         String title = mMovie.getmOriginalTitle();
         String date = mMovie.getmReleaseDate();
@@ -184,19 +212,17 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieRevi
         if( mMovie.isValidImageUrl() ){
             mImageViewThumbnail.setVisibility(View.VISIBLE);
             String posterImageUrl = getImageUrlWithPathAndSize(imageUrl,
-                    TheMovieDB2.IMAGE_SIZE_SMALL);
+                    TheMovieDB.IMAGE_SIZE_SMALL);
             Picasso.with(getContext())
                     .load(posterImageUrl)
                     .placeholder(R.drawable.loading)
                     .into(mImageViewThumbnail);
         }
 
-        loadMovieReviewsWithID(mMovie.getmMovieID());
-
     }
 
     public String getImageUrlWithPathAndSize(String imagePath, String size){
-        StringBuilder fullImageUrl = new StringBuilder(TheMovieDB2.BASE_IMAGE_URL);
+        StringBuilder fullImageUrl = new StringBuilder(TheMovieDB.BASE_IMAGE_URL);
         return fullImageUrl.append(size).append(imagePath).toString();
     }
 
@@ -205,14 +231,90 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieRevi
                 getResources().getString(R.string.movie_detail_not_available): s;
     }
 
-    private void loadMovieReviewsWithID(long movieID){
+    private void loadMovieReviewsWithMovieID(long movieID){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl( TheMovieDB2.BASE_URL )
+                .baseUrl( TheMovieDB.BASE_URL )
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        TheMovieDB2 mdb = retrofit.create(TheMovieDB2.class);
-        Call<MovieReviews> call = mdb.loadMovieReviews(String.valueOf(movieID));
-        call.enqueue(this);
+        TheMovieDB mdb = retrofit.create(TheMovieDB.class);
+        Call<MovieReviews> call = mdb.loadMovieReviewsOf(String.valueOf(movieID));
+        //TODO, non anonymous dynamic
+        //http://stackoverflow.com/questions/7201231/java-erasure-with-generic-overloading-not-overriding
+        call.enqueue(new Callback<MovieReviews>() {
+            @Override
+            public void onResponse(Call<MovieReviews> call, Response<MovieReviews> response) {
+                List<MovieReview> currentList = mMovieReviewRecyclerViewAdapter.getmMovieReviewValues();
+                currentList.clear();
+                currentList.addAll(response.body().items);
+                mMovieReviewRecyclerViewAdapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onFailure(Call<MovieReviews> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void loadMovieTrailerIDsWithMovieID(long movieID){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl( TheMovieDB.BASE_URL )
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        TheMovieDB mdb = retrofit.create(TheMovieDB.class);
+        Call<MovieTrailers> call = mdb.loadVideoIDsOf(String.valueOf(movieID));
+        call.enqueue(new Callback<MovieTrailers>() {
+            @Override
+            public void onResponse(Call<MovieTrailers> call, Response<MovieTrailers> response) {
+                List<MovieTrailer> currentList = mMovieTrailerRecyclerViewAdapter.getmMovieTrailerValues();
+                if( currentList == null)
+                    currentList = new ArrayList<MovieTrailer>();
+                else
+                    currentList.clear();
+                currentList.addAll(response.body().items);
+                mMovieReviewRecyclerViewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<MovieTrailers> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+    private void setRecyclerLayout(View view){
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.info_list);
+        if (mColumnCount <= 1) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        } else {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mColumnCount));
+        }
+    }
+
+    private void setRecyclerAdapter(){
+        if(mRadioButtonMovieReview.isChecked()){
+            if( mMovieReviewRecyclerViewAdapter == null ){
+                mMovieReviewRecyclerViewAdapter = new MovieReviewRecyclerViewAdapter(
+                        savedInstanceMovieReviews != null ? savedInstanceMovieReviews : new ArrayList<MovieReview>(),
+                        mListener, getContext() );
+                mRecyclerView.setAdapter(mMovieReviewRecyclerViewAdapter);
+            } else{
+                mMovieReviewRecyclerViewAdapter = new MovieReviewRecyclerViewAdapter(
+                        savedInstanceMovieReviews != null ? savedInstanceMovieReviews : new ArrayList<MovieReview>(),
+                        mListener, getContext() );
+                mRecyclerView.setAdapter(mMovieReviewRecyclerViewAdapter);
+            }
+        }
+        else{
+            mMovieTrailerRecyclerViewAdapter = new MovieTrailerRecyclerViewAdapter(
+                    savedInstanceMovieTrailers != null ? savedInstanceMovieTrailers : new ArrayList<MovieTrailer>(),
+                    mListener, getContext() );
+            mRecyclerView.swapAdapter(mMovieTrailerRecyclerViewAdapter, false);
+            //boolean: If set to true, RecyclerView will recycle all existing Views.
+            // If adapters have stable ids and/or you want to animate the disappearing views,
+            // you may prefer to set this to false.
+            //http://stackoverflow.com/questions/26635841/recyclerview-change-data-set
+        }
     }
 
 }

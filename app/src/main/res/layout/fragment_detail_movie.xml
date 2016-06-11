@@ -113,16 +113,16 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/movie_trailer"
-            android:id="@+id/radioButtonTrailer"
-            android:theme="@style/MyRadioButton"/>
+            android:text="@string/movie_reviews"
+            android:id="@+id/radioButtonReviews"
+            android:theme="@style/MyRadioButton" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/movie_reviews"
-            android:id="@+id/radioButtonReviews"
-            android:theme="@style/MyRadioButton" />
+            android:text="@string/movie_trailer"
+            android:id="@+id/radioButtonTrailer"
+            android:theme="@style/MyRadioButton"/>
 
     </RadioGroup>
 

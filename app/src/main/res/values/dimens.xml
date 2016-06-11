@@ -9,4 +9,6 @@
     <dimen name="layout_inter_item_vertical_margin">8dp</dimen>
     <dimen name="movie_item_offset"> 6dp </dimen>
 
+    <dimen name="move_review_padding"> 8dp </dimen>
+
 </resources>

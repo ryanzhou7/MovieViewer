@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.ryanzhou.company.movieviewer.APIs.TheMovieDB2;
+import com.ryanzhou.company.movieviewer.API.TheMovieDB;
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.helper.ItemOffsetDecoration;
 import com.ryanzhou.company.movieviewer.model.Movie;
@@ -61,15 +61,15 @@ public class MovieFragment extends Fragment implements Callback<Movies>{
     }
 
     private void loadTopRatedMoviesToList(){
-        Retrofit retrofit = buildRetrofitWithUrl( TheMovieDB2.BASE_URL );
-        TheMovieDB2 mdb = retrofit.create(TheMovieDB2.class);
+        Retrofit retrofit = buildRetrofitWithUrl( TheMovieDB.BASE_URL );
+        TheMovieDB mdb = retrofit.create(TheMovieDB.class);
         Call<Movies> call = mdb.loadTopRatedMovies();
         call.enqueue(this);
     }
 
     private void loadPopularMoviesToList(){
-        Retrofit retrofit = buildRetrofitWithUrl( TheMovieDB2.BASE_URL );
-        TheMovieDB2 mdb = retrofit.create(TheMovieDB2.class);
+        Retrofit retrofit = buildRetrofitWithUrl( TheMovieDB.BASE_URL );
+        TheMovieDB mdb = retrofit.create(TheMovieDB.class);
         Call<Movies> call = mdb.loadPopularMovies();
         call.enqueue(this);
     }
