@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.model.MovieTrailer;
@@ -32,8 +33,7 @@ public class MovieTrailerRecyclerViewAdapter extends RecyclerView.Adapter<MovieT
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.movie_review_item, parent, false);
-        //TODO create movie trailer item
+                .inflate(R.layout.movie_trailer_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -41,6 +41,7 @@ public class MovieTrailerRecyclerViewAdapter extends RecyclerView.Adapter<MovieT
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = getmMovieTrailerValues().get(position);
         MovieTrailer movieTrailer = holder.mItem;
+        holder.mTrailerType.setText(movieTrailer.getmType());
     }
 
     @Override
@@ -54,12 +55,14 @@ public class MovieTrailerRecyclerViewAdapter extends RecyclerView.Adapter<MovieT
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        public final TextView mTrailerType;
         public final View mView;
         public MovieTrailer mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
+            mTrailerType = (TextView) view.findViewById(R.id.textView_video_type);
         }
     }
 }
