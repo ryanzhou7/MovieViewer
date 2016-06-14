@@ -7,23 +7,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.ryanzhou.company.movieviewer.API.TheMovieDB;
+import com.ryanzhou.company.movieviewer.api.TheMovieDB;
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecyclerViewAdapter.ViewHolder> {
+public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
 
     private final List<Movie> mValues;
-    private final MovieFragment.OnListFragmentInteractionListener mListener;
+    private final MovieGridFragment.OnListFragmentInteractionListener mListener;
     public final String LOG_TAG = this.getClass().getSimpleName();
     private Context mContext;
 
-    public MyMovieRecyclerViewAdapter(List<Movie> items,
-                                      MovieFragment.OnListFragmentInteractionListener listener,
-                                      Context context) {
+    public MovieRecyclerViewAdapter(List<Movie> items,
+                                    MovieGridFragment.OnListFragmentInteractionListener listener,
+                                    Context context) {
         mValues = items;
         mListener = listener;
         mContext = context;
@@ -34,7 +34,7 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_movie, parent, false);
+                .inflate(R.layout.item_movie, parent, false);
         return new ViewHolder(view);
     }
 

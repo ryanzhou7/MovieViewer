@@ -11,6 +11,7 @@ import com.google.gson.annotations.SerializedName;
 public class Movie implements Parcelable{
 
     public static final String MOVIE_ITEM_KEY = "movieItemKey";
+    public static final String MOVIE_ID_KEY = "movieIDKey";
 
     @SerializedName("original_title") private String mOriginalTitle;
     @SerializedName("poster_path") private String mImagePath;

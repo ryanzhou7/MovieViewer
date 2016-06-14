@@ -1,4 +1,4 @@
-package com.ryanzhou.company.movieviewer.API;
+package com.ryanzhou.company.movieviewer.api;
 
 import com.ryanzhou.company.movieviewer.BuildConfig;
 import com.ryanzhou.company.movieviewer.model.MovieReviews;

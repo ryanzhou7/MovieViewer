@@ -1,4 +1,4 @@
-package com.ryanzhou.company.movieviewer.detailMovie;
+package com.ryanzhou.company.movieviewer.movieDetails.reviewsTab;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -18,12 +18,12 @@ import java.util.List;
 public class MovieReviewRecyclerViewAdapter extends RecyclerView.Adapter<MovieReviewRecyclerViewAdapter.ViewHolder> {
 
     private final List<MovieReview> mMovieReviewValues;
-    private final MovieDetailsFragment.OnFragmentInteractionListener mListener;
+    private final MovieReviewsFragment.OnListFragmentInteractionListener mListener;
     public final String LOG_TAG = this.getClass().getSimpleName();
     private Context mContext;
 
     public MovieReviewRecyclerViewAdapter(List<MovieReview> items,
-                                          MovieDetailsFragment.OnFragmentInteractionListener listener,
+                                          MovieReviewsFragment.OnListFragmentInteractionListener listener,
                                           Context context) {
         mMovieReviewValues = items;
         mListener = listener;
@@ -33,7 +33,7 @@ public class MovieReviewRecyclerViewAdapter extends RecyclerView.Adapter<MovieRe
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.movie_review_item, parent, false);
+                .inflate(R.layout.item_movie_review, parent, false);
         return new ViewHolder(view);
     }
 

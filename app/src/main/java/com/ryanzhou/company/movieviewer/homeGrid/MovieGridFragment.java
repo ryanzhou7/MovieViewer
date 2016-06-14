@@ -16,8 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.ryanzhou.company.movieviewer.API.TheMovieDB;
 import com.ryanzhou.company.movieviewer.R;
+import com.ryanzhou.company.movieviewer.api.TheMovieDB;
 import com.ryanzhou.company.movieviewer.helper.ItemOffsetDecoration;
 import com.ryanzhou.company.movieviewer.model.Movie;
 import com.ryanzhou.company.movieviewer.model.Movies;
@@ -31,16 +31,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MovieFragment extends Fragment implements Callback<Movies>{
+public class MovieGridFragment extends Fragment implements Callback<Movies>{
 
     public final String LOG_TAG = this.getClass().getSimpleName();
     private int mColumnCount = 2;
     private RecyclerView mRecyclerView;
     private OnListFragmentInteractionListener mListener;
-    private MyMovieRecyclerViewAdapter mMyMovieRecyclerViewAdapter;
+    private MovieRecyclerViewAdapter mMovieRecyclerViewAdapter;
     private List<Movie> savedInstanceMovies;
 
-    public MovieFragment() {}
+    public MovieGridFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,9 +78,9 @@ public class MovieFragment extends Fragment implements Callback<Movies>{
 
     @Override
     public void onSaveInstanceState(Bundle outState){
-        if( mMyMovieRecyclerViewAdapter != null && mMyMovieRecyclerViewAdapter.getmValues() != null ){
+        if( mMovieRecyclerViewAdapter != null && mMovieRecyclerViewAdapter.getmValues() != null ){
             outState.putParcelableArrayList(Movies.MOVIES_LIST_KEY,
-                    (ArrayList<? extends Parcelable>) mMyMovieRecyclerViewAdapter.getmValues());
+                    (ArrayList<? extends Parcelable>) mMovieRecyclerViewAdapter.getmValues());
         }
         super.onSaveInstanceState(outState);
     }
@@ -104,7 +104,7 @@ public class MovieFragment extends Fragment implements Callback<Movies>{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
-
+        //http://www.android4devs.com/2014/12/how-to-make-material-design-app.html
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             mRecyclerView = (RecyclerView) view;
@@ -116,10 +116,10 @@ public class MovieFragment extends Fragment implements Callback<Movies>{
                 ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(context, R.dimen.movie_item_offset);
                 mRecyclerView.addItemDecoration(itemDecoration);
             }
-            mMyMovieRecyclerViewAdapter = new MyMovieRecyclerViewAdapter(
+            mMovieRecyclerViewAdapter = new MovieRecyclerViewAdapter(
                     savedInstanceMovies != null ? savedInstanceMovies : new ArrayList<Movie>(),
                     mListener, context );
-            mRecyclerView.setAdapter(mMyMovieRecyclerViewAdapter);
+            mRecyclerView.setAdapter(mMovieRecyclerViewAdapter);
             savedInstanceMovies = null;
         }
         return view;
@@ -153,10 +153,10 @@ public class MovieFragment extends Fragment implements Callback<Movies>{
     //Callback<Movies> implementation
     @Override
     public void onResponse(Call<Movies> call, Response<Movies> response) {
-        List<Movie> currentList = mMyMovieRecyclerViewAdapter.getmValues();
+        List<Movie> currentList = mMovieRecyclerViewAdapter.getmValues();
         currentList.clear();
         currentList.addAll(response.body().items);
-        mMyMovieRecyclerViewAdapter.notifyDataSetChanged();
+        mMovieRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override

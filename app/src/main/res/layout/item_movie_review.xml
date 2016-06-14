@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="@dimen/move_review_padding">
 
     <TextView
@@ -15,7 +15,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/textView_author"
         android:layout_alignRight="@+id/textView_author"
         android:layout_alignEnd="@+id/textView_author" />
 
@@ -25,7 +24,7 @@
         android:id="@+id/textView_author"
         android:text="author andrew"
         style="@style/boldFont"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/textView_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
