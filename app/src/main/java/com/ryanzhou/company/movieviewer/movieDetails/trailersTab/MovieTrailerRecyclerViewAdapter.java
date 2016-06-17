@@ -5,10 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.model.MovieTrailer;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -42,7 +44,13 @@ public class MovieTrailerRecyclerViewAdapter extends RecyclerView.Adapter<MovieT
         holder.mItem = getmMovieTrailerValues().get(position);
         MovieTrailer movieTrailer = holder.mItem;
         holder.mTrailerType.setText(movieTrailer.getmType());
+        String url = "http://img.youtube.com/vi/" + holder.mItem.getmYoutubeVideoID() + "/0.jpg";
+        Picasso.with(mContext)
+                .load(url)
+                .placeholder(R.drawable.loading)
+                .into(holder.mImageButton);
     }
+
 
     @Override
     public int getItemCount() {
@@ -56,13 +64,14 @@ public class MovieTrailerRecyclerViewAdapter extends RecyclerView.Adapter<MovieT
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView mTrailerType;
+        public final ImageButton mImageButton;
         public final View mView;
         public MovieTrailer mItem;
-
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mTrailerType = (TextView) view.findViewById(R.id.textView_video_type);
+            mImageButton = (ImageButton) view.findViewById(R.id.imageButtonVideo);
         }
     }
 }
