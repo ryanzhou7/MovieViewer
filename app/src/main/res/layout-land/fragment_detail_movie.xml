@@ -95,17 +95,6 @@
             android:id="@+id/textView_plot_synopsis"
             android:text="plot..." />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/more_info"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:theme="@style/material_clickable"
-            android:textColor="@color/colorAccent"
-            android:layout_gravity="right"
-            android:enabled="true" />
-
     </LinearLayout>
 
     <LinearLayout

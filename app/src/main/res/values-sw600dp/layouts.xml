@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="activity_home" type="layout">@layout/activity_home_two_pane</item>
+    <bool name="has_two_panes">true</bool>
+
+</resources>

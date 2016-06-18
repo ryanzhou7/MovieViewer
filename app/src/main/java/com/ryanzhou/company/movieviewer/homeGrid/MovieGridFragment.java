@@ -1,6 +1,7 @@
 package com.ryanzhou.company.movieviewer.homeGrid;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.api.TheMovieDB;
 import com.ryanzhou.company.movieviewer.helper.ItemOffsetDecoration;
@@ -23,7 +25,10 @@ import com.ryanzhou.company.movieviewer.model.Movie;
 import com.ryanzhou.company.movieviewer.model.Movies;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -97,7 +102,29 @@ public class MovieGridFragment extends Fragment implements Callback<Movies>{
             loadPopularMoviesToList();
         else if( id == R.id.action_filter_ratings )
             loadTopRatedMoviesToList();
+        else if( id == R.id.action_filter_favorites )
+            loadFavoriteMoviesToList();
         return super.onOptionsItemSelected(item);
+    }
+
+    private void loadFavoriteMoviesToList() {
+        SharedPreferences sharedPreferences =
+                getContext().getSharedPreferences(
+                        getContext().getString(R.string.shared_pref_movies_key), Context.MODE_PRIVATE);
+        Set<String> savedMoviesSet = new HashSet<String>();
+        savedMoviesSet = sharedPreferences.getStringSet(Movies.MOVIES_LIST_KEY, savedMoviesSet);
+        Iterator<String> it = savedMoviesSet.iterator();
+        List<Movie> savedMovieItems = new ArrayList<>();
+        while( it.hasNext() ){
+            String jsonMovie = it.next();
+            Gson gson = new Gson();
+            Movie movieObject = gson.fromJson(jsonMovie, Movie.class);
+            savedMovieItems.add(movieObject);
+        }
+        List<Movie> currentList = mMovieRecyclerViewAdapter.getmValues();
+        currentList.clear();
+        currentList.addAll(savedMovieItems);
+        mMovieRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override

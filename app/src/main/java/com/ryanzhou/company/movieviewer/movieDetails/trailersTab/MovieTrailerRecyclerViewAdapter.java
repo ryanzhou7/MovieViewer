@@ -44,11 +44,17 @@ public class MovieTrailerRecyclerViewAdapter extends RecyclerView.Adapter<MovieT
         holder.mItem = getmMovieTrailerValues().get(position);
         MovieTrailer movieTrailer = holder.mItem;
         holder.mTrailerType.setText(movieTrailer.getmType());
-        String url = "http://img.youtube.com/vi/" + holder.mItem.getmYoutubeVideoID() + "/0.jpg";
+        final String url = "http://img.youtube.com/vi/" + holder.mItem.getmYoutubeVideoID() + "/0.jpg";
         Picasso.with(mContext)
                 .load(url)
                 .placeholder(R.drawable.loading)
                 .into(holder.mImageButton);
+        holder.mImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onMoviewTrailerSelected(holder.mItem);
+            }
+        });
     }
 
 
@@ -61,10 +67,11 @@ public class MovieTrailerRecyclerViewAdapter extends RecyclerView.Adapter<MovieT
         return mMovieTrailerValues;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        public final TextView mTrailerType;
-        public final ImageButton mImageButton;
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        //@BindView(R.id.textView_video_type)
+        TextView mTrailerType;
+        //@BindView(R.id.imageButtonVideo)
+        ImageButton mImageButton;
         public final View mView;
         public MovieTrailer mItem;
         public ViewHolder(View view) {

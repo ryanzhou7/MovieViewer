@@ -14,6 +14,7 @@ public class Movies {
 
     //"results" is key for json data to be put into items
     public static final String MOVIES_LIST_KEY = "moviesListKey";
+    public static final String SHARED_PREF_SAVED_MOVIES_SET_KEY = "sharedPrefSavedMoviesSetKey";
     @SerializedName("results")
     public List<Movie> items;
     public Movies(){

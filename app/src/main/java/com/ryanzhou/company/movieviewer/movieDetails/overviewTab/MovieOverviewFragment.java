@@ -1,9 +1,13 @@
 package com.ryanzhou.company.movieviewer.movieDetails.overviewTab;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,17 +16,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.ryanzhou.company.movieviewer.R;
 import com.ryanzhou.company.movieviewer.api.TheMovieDB;
 import com.ryanzhou.company.movieviewer.model.Movie;
 import com.ryanzhou.company.movieviewer.model.MovieReviews;
 import com.ryanzhou.company.movieviewer.model.MovieTrailer;
+import com.ryanzhou.company.movieviewer.model.Movies;
 import com.ryanzhou.company.movieviewer.movieDetails.reviewsTab.MovieReviewRecyclerViewAdapter;
 import com.ryanzhou.company.movieviewer.movieDetails.trailersTab.MovieTrailerRecyclerViewAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MovieOverviewFragment extends Fragment{
 
@@ -36,6 +44,8 @@ public class MovieOverviewFragment extends Fragment{
     private RecyclerView mRecyclerView;
     private int mColumnCount = 1;
     private Movie mMovie;
+    private CoordinatorLayout mCoordinatorLayout;
+    FloatingActionButton mFloatingActionButton;
     ImageView mImageViewThumbnail;
     TextView mTextViewTitle;
     TextView mTextViewUserRating;
@@ -110,6 +120,27 @@ public class MovieOverviewFragment extends Fragment{
         mTextViewUserRating = (TextView) v.findViewById(R.id.textView_user_ratings);
         mTextViewReleaseDate = (TextView) v.findViewById(R.id.textView_release_date);
         mTextViewSynopsis = (TextView) v.findViewById(R.id.textView_plot_synopsis);
+        mFloatingActionButton = (FloatingActionButton) v.findViewById(R.id.floatingActionButton_add_movie);
+        mCoordinatorLayout = (CoordinatorLayout) v.findViewById(R.id.coordinatorLayout);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences sharedPreferences =
+                        getContext().getSharedPreferences(
+                                getContext().getString(R.string.shared_pref_movies_key), Context.MODE_PRIVATE);
+                Set<String> savedMoviesSet = new HashSet<String>();
+                savedMoviesSet = sharedPreferences.getStringSet(Movies.MOVIES_LIST_KEY, savedMoviesSet);
+                Gson gson = new Gson();
+                String jsonMovie = gson.toJson(mMovie);
+                savedMoviesSet.add(jsonMovie);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putStringSet(Movies.MOVIES_LIST_KEY, savedMoviesSet);
+                editor.commit();
+                Snackbar.make(mCoordinatorLayout, "Saved "+ mMovie.getmOriginalTitle(),
+                        Snackbar.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
     private void bindMovieData(Movie m){

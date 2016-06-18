@@ -1,106 +1,111 @@
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/coordinatorLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".movieDetails.MovieDetailsActivity"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView_thumbnail"
-            android:visibility="gone"/>
+        android:layout_height="match_parent"
+        android:id="@+id/linearLayout_all_movie_detail_widgets"
+        tools:context=".movieDetails.MovieDetailsActivity"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/layout_intra_item_horizontal_margin"
-            android:orientation="vertical">
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView_thumbnail"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/layout_intra_item_horizontal_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/boldFont"
+                    android:text="@string/movie_title"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_title"
+                    style="@style/movie_detail_item"
+                    android:text="Title" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/boldFont"
+                    android:text="@string/movie_rating"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_user_ratings"
+                    android:text="Userrating"
+                    style="@style/movie_detail_item"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/boldFont"
+                    android:text="@string/movie_release_date"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_release_date"
+                    android:text="Release date"
+                    style="@style/movie_detail_item"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/layout_inter_item_vertical_margin">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/boldFont"
-                android:text="@string/movie_title"/>
+                android:text="@string/movie_plot_synopsis"
+                android:layout_marginBottom="@dimen/layout_intra_item_vertical_margin"/>
+
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView_title"
-                style="@style/movie_detail_item"
-                android:text="Title" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/boldFont"
-                android:text="@string/movie_rating"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView_user_ratings"
-                android:text="Userrating"
-                style="@style/movie_detail_item"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/boldFont"
-                android:text="@string/movie_release_date"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView_release_date"
-                android:text="Release date"
-                style="@style/movie_detail_item"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/textView_plot_synopsis"
+                android:text="plot..." />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/layout_inter_item_vertical_margin">
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        android:id="@+id/floatingActionButton_add_movie"
+        app:layout_anchor="@id/linearLayout_all_movie_detail_widgets"
+        android:src="@drawable/ic_add"
+        app:layout_anchorGravity="bottom|right|end" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/boldFont"
-            android:text="@string/movie_plot_synopsis"
-            android:layout_marginBottom="@dimen/layout_intra_item_vertical_margin"/>
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/textView_plot_synopsis"
-            android:text="plot..."
-            android:ellipsize="end"
-            android:maxLines="4"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/more_info"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:theme="@style/material_clickable"
-            android:textColor="@color/colorAccent"
-            android:layout_gravity="right"
-            android:enabled="true" />
-
-    </LinearLayout>
-
-</LinearLayout>
-
+</android.support.design.widget.CoordinatorLayout>
