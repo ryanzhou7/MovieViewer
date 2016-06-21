@@ -21,7 +21,6 @@ import com.ryanzhou.company.movieviewer.model.MovieReviews;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -129,6 +128,8 @@ public class MovieReviewsFragment extends Fragment{
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener)
             mListener = (OnListFragmentInteractionListener) context;
+        else if( getParentFragment() instanceof OnListFragmentInteractionListener )
+            mListener = (OnListFragmentInteractionListener) getParentFragment();
         else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");

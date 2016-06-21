@@ -127,8 +127,10 @@ public class MovieTrailersFragment extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener)
+        if (context instanceof OnListFragmentInteractionListener )
             mListener = (OnListFragmentInteractionListener) context;
+        else if( getParentFragment() instanceof OnListFragmentInteractionListener)
+            mListener = (OnListFragmentInteractionListener) getParentFragment();
         else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");

@@ -85,9 +85,13 @@ public class MovieOverviewFragment extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
+        if (context instanceof OnFragmentInteractionListener){
             mListener = (OnFragmentInteractionListener) context;
-        } else {
+        }
+        else if ( getParentFragment() instanceof OnFragmentInteractionListener ){
+            mListener = (OnFragmentInteractionListener) getParentFragment();
+        }
+        else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }

@@ -6,6 +6,4 @@
     android:name="com.ryanzhou.company.movieviewer.movieDetails.trailersTab.MovieTrailersFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".movieDetails.trailersTab.MovieTrailersFragment"
-    />
+    app:layoutManager="LinearLayoutManager" />

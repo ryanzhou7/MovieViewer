@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/linearLayout_all_movie_detail_widgets"
-        tools:context=".movieDetails.MovieDetailsActivity"
+        tools:context=".movieDetails.MovieDetailsFragmentsContainer"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:orientation="vertical">
 
