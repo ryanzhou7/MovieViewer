@@ -26,25 +26,14 @@ public class HomeActivity extends AppCompatActivity implements MovieGridFragment
         if (savedInstanceState == null) {
             //Nothing saved, initial creation
             MovieGridFragment mgf = new MovieGridFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.movie_grid_container, mgf)
+            getSupportFragmentManager().beginTransaction().add(R.id.movie_grid_container, mgf)
                     .commit();
-        }
-        if( isTwoPane ){
-//            MovieDetailsFragmentsContainer mdfc = MovieDetailsFragmentsContainer.newInstance();
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.movie_details_container, mdfc)
-//                    .commit();
         }
     }
     @Override
     public void onListFragmentInteraction(Movie m){
         if( isTwoPane ){
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(Movie.MOVIE_ITEM_KEY, m);
-            MovieDetailsFragmentsContainer mda = MovieDetailsFragmentsContainer.newInstance(bundle);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.movie_details_container, mda);
+            loadMovieDetailsFragmentsContainerWith(m);
         }
         else{
             Intent intent = new Intent(getApplicationContext(), MovieDetailsActivity.class);
@@ -54,4 +43,19 @@ public class HomeActivity extends AppCompatActivity implements MovieGridFragment
 
     }
 
+    private void loadMovieDetailsFragmentsContainerWith(Movie m){
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Movie.MOVIE_ITEM_KEY, m);
+        MovieDetailsFragmentsContainer mda = MovieDetailsFragmentsContainer.newInstance(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.movie_details_container, mda).commit();
+    }
+
+
+    @Override
+    public void moviesDataLoaded(Movie m) {
+        if(isTwoPane){
+            loadMovieDetailsFragmentsContainerWith(m);
+        }
+    }
 }

@@ -184,6 +184,8 @@ public class MovieGridFragment extends Fragment implements Callback<Movies>{
         currentList.clear();
         currentList.addAll(response.body().items);
         mMovieRecyclerViewAdapter.notifyDataSetChanged();
+        if( currentList.size() > 0 )
+            mListener.moviesDataLoaded(currentList.get(0));
     }
 
     @Override
@@ -193,5 +195,6 @@ public class MovieGridFragment extends Fragment implements Callback<Movies>{
 
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Movie m);
+        void moviesDataLoaded(Movie m);
     }
 }
