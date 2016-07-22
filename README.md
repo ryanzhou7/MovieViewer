@@ -1,6 +1,8 @@
 # MovieViewer
 
-![Home Demo](https://github.com/ryanzhou7/MovieViewer/tree/master/app/media/home.gif?raw=true)
+
+## What's this? 
+<img src="https://github.com/ryanzhou7/MovieViewer/tree/master/app/media/home.gif" width=300>
 
 To run, sign up for https://www.themoviedb.org/ account and get new API key. In the gradle.properties's project properties file save
 
