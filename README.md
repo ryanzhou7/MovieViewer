@@ -20,10 +20,9 @@ which will take the api key and replace it in the android project.
 
 ### Project 2 of the 
 ### Android Developer Nanodegree by Google Program
-[![udacity][1]][2]
+<img src="https://raw.githubusercontent.com/ryanzhou7/MovieViewer/master/app/media/android_developer_udacity_logo.png" width=300>
 
-[1]: ./app/media/android_developer_udacity_logo
-[2]: https://www.udacity.com/course/android-developer-nanodegree--nd801
+https://www.udacity.com/course/android-developer-nanodegree--nd801
 
 ## Libraries
 * [Butter Knife](https://github.com/JakeWharton/butterknife)
