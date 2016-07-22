@@ -5,9 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.ryanzhou.company.movieviewer.R;
 
-public class MovieDetailsActivity extends AppCompatActivity{
+public class MovieDetailsActivity extends AppCompatActivity {
 
     private final String LOG_TAG = this.getClass().getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,5 +20,7 @@ public class MovieDetailsActivity extends AppCompatActivity{
                 .add(R.id.movie_details_fragments_container, movieDetailsFragmentsContainer)
                 .commit();
 
+
     }
+
 }
