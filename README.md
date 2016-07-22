@@ -2,7 +2,7 @@
 
 
 ## What's this? 
-<img src="https://github.com/ryanzhou7/MovieViewer/tree/master/app/media/home.gif" width=300>
+<img src="https://raw.githubusercontent.com/ryanzhou7/MovieViewer/master/app/media/home.gif" width=300>
 
 To run, sign up for https://www.themoviedb.org/ account and get new API key. In the gradle.properties's project properties file save
 
